@@ -12,7 +12,7 @@ const MapboxComponent = () => {
   //39.277707,-6.812034
   const [lng] = useState(39.277707);
   const [lat] = useState(-6.812034);
-  const [zoom] = useState(15);
+  const [zoom] = useState(13);
   const [start_lat, setStartLat] = useState(39.270246);
   const [start_lng, setStartLng] = useState(-6.811863);
   const [start, setStart] = useState("");
@@ -33,36 +33,7 @@ const MapboxComponent = () => {
     setStartLat(start_coords[0]);
     setStartLng(start_coords[1]);
 
-    getRoute([start_lat,start_lng])
-
-    if (map.current.getLayer('point')) {
-      map.current.getSource('point').setData([start_lat,start_lng]);
-    } else {
-      map.current.addLayer({
-        id: 'point',
-        type: 'circle',
-        source: {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: [
-              {
-                type: 'Feature',
-                properties: {},
-                geometry: {
-                  type: 'Point',
-                  coordinates: [start_lat,start_lng]
-                }
-              }
-            ]
-          }
-        },
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#3887be'
-        }
-      });
-    }
+    loadMap([start_lat,start_lng])
   }
 
   const handleEndEnter = (e) => {
@@ -103,7 +74,7 @@ const MapboxComponent = () => {
       getRoute(coords);
 
       // Add starting point to the map
-      if (map.current.getLayer('point')) {
+      if (map.current.getSource('point')) {
         map.current.getSource('point').setData(coords);
       } else {
         map.current.addLayer({
@@ -147,7 +118,7 @@ const MapboxComponent = () => {
         }
       ]
     };
-    if (map.current.getLayer('end')) {
+    if (map.current.getSource('end')) {
       map.current.getSource('end').setData(end);
     } else {
       map.current.addLayer({
@@ -255,7 +226,7 @@ const MapboxComponent = () => {
     });
     // Clean up on unmount
     return () => map.current.remove();
-  }, [lat, lng, zoom]); 
+  }, [start_lat, start_lng, zoom]); 
 
   return (
     <div>
